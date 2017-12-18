@@ -8,6 +8,8 @@ function love.load()
 	handY = HEIGHT
 	mouseX = lookX
 	mouseY = lookY
+	eyeOpen = 1.0
+	eyeClosing = true
 
 	love.window.setMode(WIDTH,HEIGHT)
 	
@@ -24,6 +26,19 @@ function love.update(dt)
 
 	lookX, lookY = getNextPositionTowards(mouseX, mouseY, lookX, lookY, 0.05)
 	handX, handY = getNextPositionTowards(mouseX+getRandomOffset(50), mouseY+getRandomOffset(50), handX, handY, 0.02)
+	
+	if (eyeClosing) then
+		eyeOpen = eyeOpen - eyeOpen * 0.003
+	else
+		eyeOpen = eyeOpen + (1-eyeOpen) * 0.02
+	end
+	if eyeOpen > 0.9 and eyeClosing == false then 
+		eyeOpen = 0.9
+		eyeClosing = true
+	elseif eyeOpen < 0.3 and eyeClosing then
+		eyeOpen = 0.3
+		eyeClosing = false
+	end
 end
  
 -- Draw a coloured rectangle.
@@ -35,8 +50,8 @@ function love.draw()
 	-- Draw hand
 	love.graphics.draw(g_hand,handX,handY)
 	-- Draw eye-lids 
-	local bottomX, bottomY = drawLid(g_bottom,lookX,lookY,1.0,false)
-	local topX, topY = drawLid(g_top,lookX,lookY,1.0,true)
+	local bottomX, bottomY = drawLid(g_bottom,lookX,lookY,eyeOpen,false)
+	local topX, topY = drawLid(g_top,lookX,lookY,eyeOpen,true)
 	
 	-- Draw bars to cover rest of background
 	love.graphics.setColor(0,0,0)
