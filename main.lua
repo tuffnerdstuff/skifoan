@@ -4,6 +4,8 @@ function love.load()
 	HEIGHT = 720
 	lookX = WIDTH/2
 	lookY = HEIGHT/2
+	handX = WIDTH
+	handY = HEIGHT
 	mouseX = lookX
 	mouseY = lookY
 
@@ -12,6 +14,7 @@ function love.load()
     g_back = love.graphics.newImage( "gfx/back.png" )
 	g_top = love.graphics.newImage( "gfx/eye_top.png" )
 	g_bottom = love.graphics.newImage( "gfx/eye_bottom.png" )
+	g_hand = love.graphics.newImage( "gfx/hand.png" )
 end
  
 -- Increase the size of the rectangle every frame.
@@ -20,15 +23,18 @@ function love.update(dt)
 	mouseX, mouseY = love.mouse.getPosition()
 
 	lookX, lookY = getNextPositionTowards(mouseX, mouseY, lookX, lookY, 0.05)
+	handX, handY = getNextPositionTowards(mouseX+getRandomOffset(50), mouseY+getRandomOffset(50), handX, handY, 0.02)
 end
  
 -- Draw a coloured rectangle.
 function love.draw()
 	love.graphics.setColor(255,255,255)
+	
+	-- Draw background
     love.graphics.draw(g_back,0,0)
-	
-	
-	
+	-- Draw hand
+	love.graphics.draw(g_hand,handX,handY)
+	-- Draw eye-lids 
 	local bottomX, bottomY = drawLid(g_bottom,lookX,lookY,1.0,false)
 	local topX, topY = drawLid(g_top,lookX,lookY,1.0,true)
 	
