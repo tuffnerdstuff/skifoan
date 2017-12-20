@@ -25,7 +25,7 @@ function love.update(dt)
 	mouseX, mouseY = love.mouse.getPosition()
 
 	lookX, lookY = getNextPositionTowards(mouseX, mouseY, lookX, lookY, 0.05)
-	handX, handY = getNextPositionTowards(mouseX+getRandomOffset(50), mouseY+getRandomOffset(50), handX, handY, 0.02)
+	handX, handY = getNextPositionTowards(WIDTH/2+getRandomOffset(50), HEIGHT/2+getRandomOffset(50), handX, handY, 0.02)
 	
 	if (eyeClosing) then
 		eyeOpen = eyeOpen - eyeOpen * 0.003
@@ -46,12 +46,12 @@ function love.draw()
 	love.graphics.setColor(255,255,255)
 	
 	-- Draw background
-    love.graphics.draw(g_back,0,0)
+    love.graphics.draw(g_back,lookX-WIDTH,lookY-HEIGHT,0,2,2)
 	-- Draw hand
 	love.graphics.draw(g_hand,handX,handY)
 	-- Draw eye-lids 
-	local bottomX, bottomY = drawLid(g_bottom,lookX,lookY,eyeOpen,false)
-	local topX, topY = drawLid(g_top,lookX,lookY,eyeOpen,true)
+	local bottomX, bottomY = drawLid(g_bottom,WIDTH/2,HEIGHT/2,eyeOpen,false)
+	local topX, topY = drawLid(g_top,WIDTH/2,HEIGHT/2,eyeOpen,true)
 	
 	-- Draw bars to cover rest of background
 	love.graphics.setColor(0,0,0)
@@ -81,8 +81,6 @@ end
 function getNextPositionTowards(targetX, targetY, currentX, currentY, easing)
 	dX = targetX - currentX
 	dY = targetY - currentY
-	d = math.sqrt((dX * dX) + (dY * dY))
 	return currentX + (dX * easing), currentY + (dY * easing)
-
 	
 end
