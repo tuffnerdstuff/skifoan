@@ -2,6 +2,7 @@
 function love.load()
 	WIDTH = 1280
 	HEIGHT = 720
+	BACK_SCALE = 2
 	lookX = WIDTH/2
 	lookY = HEIGHT/2
 	handX = WIDTH
@@ -17,6 +18,20 @@ function love.load()
 	g_top = love.graphics.newImage( "gfx/eye_top.png" )
 	g_bottom = love.graphics.newImage( "gfx/eye_bottom.png" )
 	g_hand = love.graphics.newImage( "gfx/hand.png" )
+	
+	-- Shader
+	myShader = love.graphics.newShader[[
+		extern number fact;
+		const float kernel[5] = float[](0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162);
+		vec4 effect(vec4 color, sampler2D tex, vec2 tex_coords, vec2 pos) {
+			color = texture2D(tex, tex_coords) * kernel[0];
+			for(int i = 1; i < 5; i++) {
+				color += texture2D(tex, vec2(tex_coords.x + i * (fact*0.05), tex_coords.y +i* (fact*0.05))) * kernel[i];
+				color += texture2D(tex, vec2(tex_coords.x - i * (fact*0.05), tex_coords.y -i* (fact*0.05))) * kernel[i];
+			}
+			return color;
+		}
+	]]
 end
  
 -- Increase the size of the rectangle every frame.
@@ -45,10 +60,15 @@ end
 function love.draw()
 	love.graphics.setColor(255,255,255)
 	
+	myShader:send("fact",eyeOpen)
+	love.graphics.setShader(myShader)
 	-- Draw background
-    love.graphics.draw(g_back,lookX-WIDTH,lookY-HEIGHT,0,2,2)
+    love.graphics.draw(g_back,lookX*(BACK_SCALE-1)*-1,lookY*(BACK_SCALE-1)*-1,0,BACK_SCALE,BACK_SCALE)
 	-- Draw hand
 	love.graphics.draw(g_hand,handX,handY)
+	love.graphics.setShader()
+
+	
 	-- Draw eye-lids 
 	local bottomX, bottomY = drawLid(g_bottom,WIDTH/2,HEIGHT/2,eyeOpen,false)
 	local topX, topY = drawLid(g_top,WIDTH/2,HEIGHT/2,eyeOpen,true)
